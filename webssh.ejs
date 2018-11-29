@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="http://127.0.0.1:3000/xterm/dist/xterm.css" />
+  <script src="http://127.0.0.1:3000/xterm/dist/xterm.js"></script>
+  <script src="http://127.0.0.1:3000/xterm/dist/addons/attach/attach.js"></script>
+  <script src="http://127.0.0.1:3000/xterm/dist/addons/fit/fit.js"></script>
+</head>
+
+<body>
+  <div id="terminal"></div>
+
+
+
+
+  <script>
+    var hostip = window.location.pathname.split("/").pop()
+    var ws = new WebSocket("ws://10.10.0.212:33333/wssh/" + hostip);
+    Terminal.applyAddon(attach);
+    Terminal.applyAddon(fit);
+
+    var xterm = new Terminal({
+      cols: 80,
+      rows: 36,
+    });
+
+    xterm.open(document.getElementById('terminal'));
+
+
+
+    xterm.attach(ws, true, true);
+    xterm.fit();
+
+
+    ws.onopen = function (evt) {
+      ws.send("pwd\n");
+    };
+
+    ws.onclose = function () {
+      ws.close();
+    };
+    ws.onmessage = function (msg) {
+      xterm.write(msg.data);
+    };
+
+    xterm.on(function (data) {
+      ws.send(data);
+    });
+  </script>
+</body>
+
+</html>
