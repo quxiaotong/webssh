@@ -56,7 +56,6 @@ class WSSHBridge(object):
         try:
             while True:
                 data = self._websocket.receive()
-                print(data)
                 try:
                     if 'resize' in data:
                         channel.resize_pty(
